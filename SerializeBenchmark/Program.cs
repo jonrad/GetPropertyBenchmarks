@@ -33,18 +33,24 @@ namespace SerializeBenchmark
 
             var candidates = GetCandidates().ToArray();
 
-            foreach (var candidate in candidates)
+            Console.WriteLine("Calculating, bear with me");
+
+            // I wanted to play with C# tuples
+            // they're not as good as F#s :(
+            var results = candidates
+                .Select(c => (candidate: c, func: c.CreateDelegate(jon, benchmarkPropertyInfo)))
+                .Select(c => (candidate: c.candidate, func: c.func, benchmark: Benchmark(c.Item2, jon, c.Item1.Divisor)))
+                .OrderBy(c => c.benchmark);
+
+            foreach (var (candidate, func, benchmarkMs) in results)
             {
                 // 'Testing' to make sure value types work
                 var valueTypeFunc = candidate.CreateDelegate(jon, valueTypePropertyInfo);
                 Console.WriteLine($"{candidate.GetType().Name} Value Type Got: {valueTypeFunc(jon)}");
 
                 // verify we get the right result
-                var func = candidate.CreateDelegate(jon, benchmarkPropertyInfo);
                 Console.WriteLine($"{candidate.GetType().Name} Got: {func(jon)}");
 
-                // benchmark
-                var benchmarkMs = Benchmark(func, jon, candidate.Divisor);
                 Console.WriteLine($"{Count} iterations would take: {benchmarkMs}ms");
 
                 Console.WriteLine();
@@ -66,7 +72,7 @@ namespace SerializeBenchmark
                 .Cast<ICandidate>();
         }
 
-        public static long Benchmark<T>(Func<T, object> func, T obj, int divisor = 1)
+        public static long Benchmark(Func<object, object> func, object obj, int divisor = 1)
         {
             var watch = Stopwatch.StartNew();
             for (var i = 0; i < Count / divisor; i++)
