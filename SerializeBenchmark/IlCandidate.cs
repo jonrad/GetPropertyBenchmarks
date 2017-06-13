@@ -30,14 +30,4 @@ namespace SerializeBenchmark
             return (Func<object, object>)methodBuilder.CreateDelegate(typeof(Func<object, object>));
         }
     }
-
-    public class ControlCandidate : ICandidate
-    {
-        public int Divisor => 1;
-
-        public Func<object, object> CreateDelegate(object obj, PropertyInfo propertyInfo)
-        {
-            return o => ((Program.Person)o).Name;
-        }
-    }
 }

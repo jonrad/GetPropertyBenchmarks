@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ControlCandidate.cs" />
     <Compile Include="DynamicInvokeCandidate.cs" />
     <Compile Include="ExpressionTreeCandidate.cs" />
     <Compile Include="ICandidate.cs" />
